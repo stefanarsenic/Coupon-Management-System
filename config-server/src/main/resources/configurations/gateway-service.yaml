@@ -3,7 +3,8 @@ server:
 spring:
   cloud:
     gateway:
-      discovery:
-        locator:
-          enabled: true
-        routes:
+      routes:
+        - id: auth-service
+          predicates:
+            - Path=/auth/**
+          uri: locahost:8050
