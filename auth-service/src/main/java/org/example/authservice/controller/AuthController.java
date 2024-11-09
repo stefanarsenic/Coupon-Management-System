@@ -8,12 +8,17 @@ import org.example.authservice.records.RegisterRequest;
 import org.example.authservice.records.RegisterResponse;
 import org.example.authservice.service.AuthService;
 import org.example.authservice.service.JwtService;
+import org.example.authservice.service.UserDetailsServiceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.HashMap;
 
 @RestController
 @RequestMapping("/auth")
@@ -21,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final AuthService authService;
+    private final UserDetailsServiceImpl userDetailsService;
     private final JwtService jwtService;
 
     @PostMapping("/register")
@@ -32,14 +38,22 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
-        User authenticatedUser = authService.authenticate(request);
+    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+        try {
+            User authenticatedUser = authService.authenticate(request);
 
-        String token = jwtService.generateToken(authenticatedUser);
-        long expirationTime = jwtService.getExpirationTime();
+            UserDetails u = userDetailsService.loadUserByUsername(authenticatedUser.getUsername());
+            String token = jwtService.generateToken(u);
+            long expirationTime = jwtService.getExpirationTime();
 
-        LoginResponse loginResponse = new LoginResponse(token, expirationTime);
+            LoginResponse loginResponse = new LoginResponse(token, expirationTime);
 
-        return ResponseEntity.status(HttpStatus.OK).body(loginResponse);
+            return ResponseEntity.status(HttpStatus.OK).body(loginResponse);
+        }
+        catch (BadCredentialsException e) {
+            HashMap<String, String> errorMessage = new HashMap<>();
+            errorMessage.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);
+        }
     }
 }

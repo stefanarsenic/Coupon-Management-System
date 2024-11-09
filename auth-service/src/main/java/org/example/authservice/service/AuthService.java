@@ -11,6 +11,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -22,9 +23,18 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public User register(RegisterRequest request){
-        return new User(0L, request.username(), request.password(), Arrays.asList(roleRepository.findByName("ROLE_USER")));
+        User newUser = new User(
+                0L,
+                request.username(),
+                passwordEncoder.encode(request.password()),
+                true, true,
+                Arrays.asList(roleRepository.findByName("ROLE_USER"))
+        );
+
+        return userRepository.save(newUser);
     }
 
     public User authenticate(LoginRequest request){
