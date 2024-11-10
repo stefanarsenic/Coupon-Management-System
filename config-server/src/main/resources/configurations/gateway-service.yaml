@@ -7,4 +7,12 @@ spring:
         - id: auth-service
           predicates:
             - Path=/auth/**
-          uri: locahost:8050
+          uri: http://localhost:8050
+        - id: coupon-generation-service
+          predicates:
+            - Path=/api/coupons/**
+          uri: http://localhost:8060
+#        - id: search-service
+#          predicates:
+#            - Path=/api/coupons/search/**
+#          uri: http://localhost:8070

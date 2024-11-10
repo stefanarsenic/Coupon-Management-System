@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: search-service
+  config:
+    import: optional:configserver:http://localhost:8888
+  jpa:
+    database: mysql
+  datasource:
+    url: jdbc:mysql://localhost:3306/coupon-db
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  kafka:
+    bootstrap-servers: localhost:9092

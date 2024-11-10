@@ -9,4 +9,3 @@ logging:
     org:
       springframework:
         web: debug
-      hibernate: error
