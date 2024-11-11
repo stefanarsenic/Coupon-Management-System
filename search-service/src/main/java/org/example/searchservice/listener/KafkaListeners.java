@@ -1,4 +1,4 @@
-package org.example.searchservice.controller;
+package org.example.searchservice.listener;
 
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
