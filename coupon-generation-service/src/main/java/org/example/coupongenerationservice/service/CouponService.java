@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.coupongenerationservice.model.Coupon;
 import org.example.coupongenerationservice.records.CouponRequest;
 import org.example.coupongenerationservice.repository.CouponRepository;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 public class CouponService {
 
     private final CouponRepository couponRepository;
+    private final KafkaTemplate kafkaTemplate;
 
     @Transactional
     public ArrayList<Coupon> generateCoupons(CouponRequest request) {
@@ -26,7 +28,9 @@ public class CouponService {
                 c.setCategory(request.category());
                 c.setType(request.type());
 
-                coupons.add(couponRepository.save(c));
+                Coupon saved = couponRepository.save(c);
+                coupons.add(saved);
+                kafkaTemplate.send("coupons", saved);
             }
 
             return coupons;

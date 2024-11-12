@@ -21,12 +21,12 @@ public class GatewayConfig {
                 .route("auth-service", r -> r.path("/auth/**")
                         .filters(f -> f.filter(authenticationFilter))
                         .uri("lb://auth-service"))
-                .route("coupon-generation-service", r -> r.path("/api/coupons/**")
+                .route("coupon-generation-service", r -> r.path("/api/coupons")
                         .filters(f -> f.filter(authenticationFilter))
                         .uri("lb://coupon-generation-service"))
-//                .route("search-service", r -> r.path("/api/coupons/search/**")
-//                        .filters(f -> f.filter(authenticationFilter))
-//                        .uri("lb://search-service"))
+                .route("search-service", r -> r.path("/api/coupons/search/**")
+                        .filters(f -> f.filter(authenticationFilter))
+                        .uri("lb://search-service"))
                 .build();
     }
 }

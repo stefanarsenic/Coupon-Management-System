@@ -22,13 +22,11 @@ import java.util.HashMap;
 public class CouponController {
 
     private final CouponService couponService;
-    private final KafkaTemplate<String, String> kafkaTemplate;
 
     @PostMapping("/generate")
     public ResponseEntity<?> generateCoupons(@RequestBody CouponRequest request) {
         try {
             ArrayList<Coupon> coupons = couponService.generateCoupons(request);
-            kafkaTemplate.send("coupons", "hello world");
             return ResponseEntity.status(HttpStatus.CREATED)
                 .body(coupons);
         }
